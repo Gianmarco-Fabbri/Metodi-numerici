@@ -1,1 +1,0 @@
-print("Metodi numerici")
