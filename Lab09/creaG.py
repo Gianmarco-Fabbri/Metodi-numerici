@@ -1,3 +1,4 @@
+from itertools import product
 import numpy as np
 
 from scipy import sparse
@@ -10,7 +11,7 @@ def numgrid(n):
     adapted from C. Moler, 7-16-91, 12-22-93.
     Copyright (c) 1984-94 by The MathWorks, Inc.
     """
-    G=np.zeros((n,n));
+    G=np.zeros((n,n))
     cont_i=1
     for j in range(1,n-1):
         cont_f=cont_i+n-2
