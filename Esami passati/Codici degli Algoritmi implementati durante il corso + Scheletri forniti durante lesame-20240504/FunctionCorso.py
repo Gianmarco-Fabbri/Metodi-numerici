@@ -1,6 +1,5 @@
 import numpy as np
 import scipy.linalg as spLin
-import RisolviSis
 
 def solve_nsis(A,B):
   # Test dimensione  

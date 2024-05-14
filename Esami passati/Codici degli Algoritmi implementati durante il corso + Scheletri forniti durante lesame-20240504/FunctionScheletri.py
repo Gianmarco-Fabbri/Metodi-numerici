@@ -2,92 +2,106 @@ import numpy as np
 import scipy.linalg as spLin
 import RisolviSis
 
- 
-    
 def jacobi(A,b,x0,toll,it_max):
     
     errore=1000
-    M=
-    E= 
-    F= 
-    N= 
-    T=np.dot( )
-     
-    raggiospettrale= 
-    print("raggio spettrale jacobi", raggiospettrale)
+    M=np.diag(1/np.diag(A)) #inversa di M
+    E=np.tril(A,-1)
+    F=np.triu(A,1)
+    N=-(E+F)
+    T=M@N
+    
+    raggiospettrale=np.max(np.abs(np.linalg.eigvals(T)))    #più è grande e più è mal condizionata
+    print("raggio spettrale jacobi", raggiospettrale)   #il metodo converge per raggiospettrale < 1
+    #if raggiospettrale < 1: print("metodo convergente")
     it=0
-     
+    
     er_vet=[]
-    while  
-        x=
-        errore= 
-        er_vet.append( )
+    while it <= it_max and errore >= toll:
+        x=(T@x0)+(M@b)
+        errore=np.linalg.norm(x-x0)/np.linalg.norm(x)
+        er_vet.append(errore)
         x0=x.copy()
         it=it+1
     return x,it,er_vet
 
+
+#Converge sempre per matrici simmetriche definite positive
 def gauss_seidel(A,b,x0,toll,it_max):
     errore=1000
      
-    D= 
-    E= 
-    F= 
-    M= 
-    N= 
-    T=np.dot( )
-     
-    raggiospettrale= 
-    print("raggio spettrale Gauss-Seidel ",raggiospettrale)
+    D=np.diag(np.diag(A))
+    E=np.tril(A,-1)
+    F=np.triu(A,1)
+    M=np.linalg.inv(E+D)   #M^-1
+    ''' M=E+D
+        invM=np.linalg.inv(M)'''
+    N=-F
+    T=M@N
+
+    raggiospettrale=np.max(np.abs(np.linalg.eigvals(T)))    
+    print("raggio spettrale Gauss-Seidel ",raggiospettrale) 
+    ''' il metodo converge per raggiospettrale < 1
+    più si avvicina a 0 e più la convergenza alla soluzione reale
+    è veloce, per quanto riguarda l'indice di condizionamento
+    si considera una matrice mal condizionata se è nell'ordine di 
+    10^3 o maggiore, ben condizionata se è < 1 '''
     it=0
     er_vet=[]
-    while  
-        x= 
-        errore= 
-        er_vet.append( )
+    while it<=it_max and errore>=toll:
+        x=(-M@F@x0)+(M@b)
+        errore=np.linalg.norm(x-x0)/np.linalg.norm(x)
+        er_vet.append(errore)
         x0=x.copy()
         it=it+1
     return x,it,er_vet
 
+'''
+servono per le matrici mal condizionate
+omega è il parametro di rilassamento > 0
+a volte consente di far convergere il metodo
+che normalmente non converge'''
 def gauss_seidel_sor(A,b,x0,toll,it_max,omega):
     errore=1000
      
-    D=np.diag(d)
-    E= 
-    F= 
+    D=np.diag(np.diag(A))
+    invD=np.linalg.inv(D)
+    E=np.tril(A,-1)
+    F=np.triu(A,1)
     #Calcolo della matrice di iterazione di Gassu_Seidel SOR
     Momega=D+omega*E
     Nomega=(1-omega)*D-omega*F
-    T=np.dot( )
-     
-    raggiospettrale= 
+    T=np.dot(np.linalg.inv(Momega),Nomega)#npl.inv(Momega)@Nomega
+    
+    raggiospettrale=np.max(np.abs(np.linalg.eigvals(T)))
     print("raggio spettrale Gauss-Seidel SOR ", raggiospettrale)
     
-    M= 
-    N= 
+    M=D+E
+    N=-F 
     it=0
     xold=x0.copy()
     xnew=x0.copy()
     er_vet=[]
     while it<=it_max and errore>=toll:
          
-        xtilde 
-        xnew= 
-        errore= 
-        er_vet.append( )
+        xtilde=RisolviSis.Lsolve(M,b-F@xold)
+        xnew=(1-omega)*xold+omega*xtilde
+        errore=np.linalg.norm(xnew-xold)/np.linalg.norm(xnew)   #solo se xnew != 0
+        er_vet.append(errore)
         xold=xnew.copy()
-        it=it+1
+        it+=1
     return xnew,it,er_vet
 
 def steepestdescent(A,b,x0,itmax,tol):
     
-#Metodo del gradiente   per la soluzione di un sistema lineare con matrice dei coefficienti simmetrica e definita positiva
+#Metodo del gradiente per la soluzione di un sistema lineare con matrice dei coefficienti simmetrica e definita positiva
     n,m=A.shape
     if n!=m:
         print("Matrice non quadrata")
         return [],[]
     
     
-   # inizializzare le variabili necessarie
+   #inizializzare le variabili necessarie
     x = x0
     r =  
     p =  
@@ -172,11 +186,10 @@ def qrLS(A,b):
     
     return x,residuo
 #Soluzione di un sistema sovradeterminato facendo uso della fattorizzazione SVD
-def SVDLS(A,b):
-     #Calcola la fattorizzazione SVD di A e utilizzala per calcolare
+def SVDLS(A,b): 
+    #Calcola la fattorizzazione SVD di A e utilizzala per calcolare
     #la soluzione nel senso dei minimi quadrati di Ax=b
-     
-        
+    
         
     thresh=np.spacing(1)*m*s[0] ##Calcolo del rango della matrice, numero dei valori singolari maggiori di una soglia
     k=np.count_nonzero(s>thresh)
