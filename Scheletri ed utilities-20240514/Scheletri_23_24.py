@@ -303,31 +303,31 @@ def my_newtonSys(fun, jac, x0, tolx, tolf, nmax):
   """
 
   matjac = jac(x0)
-  if #to do:
+  if npl.det(matjac) == 0:  #to do
     print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
     return None, None,None
 
-  s = #to do
+  s = -npl.solve(matjac,fun(x0))  #to do
   # Aggiornamento della soluzione
   it = 1
-  x1 =#to do
+  x1 = x0+s   #to do
   fx1 = fun(x1)
 
   Xm = [np.linalg.norm(s, 1)/np.linalg.norm(x1,1)]
 
-  while :#to do
-    x0 =#to do
+  while it <= nmax and npl.norm(fx1,1) >= tolf and npl.norm(s,1) > npl.norm(x1,1)*tolx:#to do
+    x0 = x1   #to do
     it += 1
     matjac = jac(x0)
-    if :#to do
+    if npl.det(matjac) == 0:  #to do
       print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
       return None, None,None
 
    
-    s =#to do
+    s = -npl.solve(matjac,fun(x0))#to do
 
     # Aggiornamento della soluzione
-    x1 = #to do
+    x1 = x0+s#to do
     fx1 = fun(x1)
     Xm.append(np.linalg.norm(s, 1)/np.linalg.norm(x1,1))
 
@@ -490,35 +490,35 @@ def my_newton_minimo(gradiente, Hess, x0, tolx, tolf, nmax):
     Vettore contenente la norma del passo ad ogni iterazione.
   """
 
-  matHess = #to do
-  if :#to do
+  matHess = Hess(x0)#to do
+  if npl.det(matHess) == 0:#to do
     print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
     return None, None, None
   grad_fx0= gradiente(x0)    
-  s = #to do
+  s = -npl.solve(matHess, gradiente(x0))#to do
   # Aggiornamento della soluzione
   it = 1
-  x1 =#to do
+  x1 = x0+s   #to do
   grad_fx1 = gradiente(x1)
   Xm = [np.linalg.norm(s, 1)]
   
-  while :#to do
+  while it <= nmax and npl.norm(grad_fx1,1) >= tolf and npl.norm(s,1) >= tolx*npl.norm(x1,1):#to do
      
-    x0 = #to do
+    x0 = x1#to do
     it += 1
-    matHess = #to do
+    matHess = Hess(x0)#to do
     grad_fx0=grad_fx1
      
-    if :#to do
+    if npl.det(matHess) == 0:#to do
        
       print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
       return None, None, None
       
  
-    s = #to do
+    s = -npl.solve(matHess, gradiente(x0))#to do
      
     # Aggiornamento della soluzione
-    x1 = #to do
+    x1 = x0+s#to do
 
     #Calcolo del gradiente nel nuovo iterato
     grad_fx1  = gradiente(x1)
@@ -568,11 +568,11 @@ def my_newton_minimo_MOD(gradiente, Hess, x0, tolx, tolf, nmax):
     print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
     return None, None, None
       
-  s = #to do
+  s = -npl.solve(matHess, gradiente_x0)#to do
   
   # Aggiornamento della soluzione
   it = 1
-  x1 = #to do
+  x1 = x0+s#to do
   grad_fx1=np.array([gradiente[0](x1[0],x1[1]),gradiente[1](x1[0],x1[1])])
   Xm = [np.linalg.norm(s, 1)]
   
@@ -580,7 +580,7 @@ def my_newton_minimo_MOD(gradiente, Hess, x0, tolx, tolf, nmax):
      
     x0 = x1
     it += 1
-    matHess = #to do
+    matHess = Hess(x0)#to do
     grad_fx0=grad_fx1
       
     if np.linalg.det(matHess) == 0:
