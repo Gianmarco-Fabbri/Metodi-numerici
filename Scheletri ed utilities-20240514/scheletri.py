@@ -1,262 +1,261 @@
 import math
 import numpy as np
 import numpy.linalg as npl
-from numpy import sign
+import scipy.linalg as spl
 import SolveTriangular
-import scipy.linalg as spLin
-
 
 def metodo_bisezione(fname, a, b, tolx, tolf):
-  """
-  Implementa il metodo di bisezione per il calcolo degli zeri di un'equazione non lineare.
-  Parametri:
-  f: La funzione da cui si vuole calcolare lo zero.
-  a: L'estremo sinistro dell'intervallo di ricerca.
-  b: L'estremo destro dell'intervallo di ricerca.
-  tol: La tolleranza di errore.
-
-  Restituisce:
-    Lo zero approssimato della funzione, il numero di iterazioni e la lista di valori intermedi.
-  """
-  fa=fname(a)
-  fb=fname(b)
-  if sign(fb)*sign(fa)>=0:       #to do
-    print("Non è possibile applicare il metodo di bisezione \n")
-    return None,None,None
-
-  it = 0
-  v_xk = []
-
-  maxit = math.ceil(math.log((b - a) / tolx) / math.log(2))-1
-
-  
-  while it <= maxit and abs(b-a) > tolx and abs(fxk) > tolf:  #to do
-    xk = (a+b)/2    #to do
-    v_xk.append(xk)
-    it += 1
-    fxk=fname(xk)
-    if fxk==0:
-      return xk, it, v_xk
+    """
+    Implementa il metodo di bisezione per il calcolo degli zeri di un'equazione non lineare.
     
-    if sign(fa)*sign(fxk)>0:
-      a=xk    
-      fa=fxk       #to do
-    elif sign(fxk)*sign(fb)>0:
-      b=xk
-      fb=fxk       #to do
-
-  return xk, it, v_xk
-
-
-def falsi(fname, a, b, maxit, tolx,tolf):
-  """
-  Implementa il metodo di falsa posizione per il calcolo degli zeri di un'equazione non lineare.   
-  Parametri:
-  f: La funzione da cui si vuole calcolare lo zero.
-  a: L'estremo sinistro dell'intervallo di ricerca.
-  b: L'estremo destro dell'intervallo di ricerca.
-  tol: La tolleranza di errore.
-  Restituisce:
-  Lo zero approssimato della funzione, il numero di iterazioni e la lista di valori intermedi.
-  """
-  fa=fname(a)
-  fb=fname(b)
- 
-  if sign(fa)*sign(fb)>0: #to do
-    print("Non è possibile applicare il metodo di falsa posizione \n")
-    return None,None,None
-
-  it = 0
-  v_xk = []
-  fxk=10
-
-  while abs(b-a) > tolx and it < maxit and abs(fxk) > tolf: #to do
-    xk = a - fa*(b-a)/(fb-fa) #to do
-    v_xk.append(xk)
-    it += 1
-
-    fxk=fname(xk)
-    if fxk==0:
-        return xk, it, v_xk
-
-    if sign(fa)*sign(fxk)>0:  
-      a=xk    #to do
-      fa=fxk  #to do
-    elif sign(fxk)*sign(fb)>0:    
-      b=xk    #to do
-      fb=fxk  #to do
-
+    Parametri:
+    f: La funzione da cui si vuole calcolare lo zero.
+    a: L'estremo sinistro dell'intervallo di ricerca.
+    b: L'estremo destro dell'intervallo di ricerca.
+    tol: La tolleranza di errore.
+    
+    Restituisce:
+    Lo zero approssimato della funzione, il numero di iterazioni e la lista di valori intermedi.
+    """
+    fa=fname(a)
+    fb=fname(b)
+    if sign(fa)*sign(fb)>=0:
+        print("Non è possibile applicare il metodo di bisezione \n")
+        return None, None,None
+    
+    it = 0
+    v_xk = []
+    maxit = math.ceil(math.log((b - a) / tolx) / math.log(2))-1
+     
+    while abs(b - a) > tolx:
+       xk = a+(b-a)/2
+       v_xk.append(xk)
+       it += 1
+       fxk=fname(xk)
+        
+       if fxk==0:
+         return xk, it, v_xk
+       if sign(fa)*sign(fxk)>0:
+         a = xk
+         fa=fxk
+       elif sign(fxk)*sign(fb)>0:
+         b = xk
+         fb=fxk
+           
     return xk, it, v_xk
 
 
-def corde(fname,m,x0,tolx,tolf,nmax):
-  """ Implementa il metodo delle corde per il calcolo degli zeri di un'equazione non lineare.
-
-  Parametri:
-  fname: La funzione da cui si vuole calcolare lo zero.
-  m: coefficiente angolare della retta che rimane fisso per tutte le iterazioni
-  tolx: La tolleranza di errore tra due iterati successivi
-  tolf: tolleranza sul valore della funzione
-  nmax: numero massimo di iterazione
-
-  Restituisce:
-  Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi."""
-  xk=[]
-  fx0=fname(x0)       #to do
-  d=fx0/m             #to do
-  x1=x0-d             #to do
-  fx1=fname(x1)
-  xk.append(x1)
-  it=1
-  
-  while  abs(d) < tolx or abs(fx1) < tolf or it >= nmax:
-    x0=x1           #to do
-    fx0=fname(x0)   #to do
-    d=fx0/m         #to do
-    '''
-    #x1= ascissa del punto di intersezione tra  la retta che passa per il punto
-    (xi,f(xi)) e ha pendenza uguale a m  e l'asse x
-    '''
-    x1=x0-d#to do  
-    fx1=fname(x1)
-    it=it+1
-  
-    xk.append(x1)
+def falsi(fname, a, b, maxit, tolx,tolf):
+    """
+    Implementa il metodo di falsa posizione per il calcolo degli zeri di un'equazione non lineare.
     
-  if it==nmax:
-    print('raggiunto massimo numero di iterazioni \n')
+    Parametri:
+    f: La funzione da cui si vuole calcolare lo zero.
+    a: L'estremo sinistro dell'intervallo di ricerca.
+    b: L'estremo destro dell'intervallo di ricerca.
+    tol: La tolleranza di errore.
+    
+    Restituisce:
+    Lo zero approssimato della funzione, il numero di iterazioni e la lista di valori intermedi.
+    """
+    fa=fname(a)
+    fb=fname(b)
+    
+    if sign(fa)*sign(fb)>=0:
+       print("Non è possibile applicare il metodo di falsa posizione \n")
+       return None, None,None
+    
+    it = 0
+    v_xk = []
+    fxk=10
+    
+    while it < maxit and abs(b - a) > tolx and abs(fxk) > tolf:
+        xk = a-fa*(b-a)/(fb-fa)
+        v_xk.append(xk)
+        it += 1
+        fxk=fname(xk)
+        if fxk==0:
+            return xk, it, v_xk
+        
+        if sign(fa)*sign(fxk)>0:
+            a = xk
+            fa=fxk
+        elif sign(fxk)*sign(fb)>0:
+            b = xk
+            fb=fxk
+    
+    return xk, it, v_xk
+
+def corde(fname,m,x0,tolx,tolf,nmax):
+    """
+    Implementa il metodo delle corde per il calcolo degli zeri di un'equazione non lineare.
+    
+    Parametri:
+    fname: La funzione da cui si vuole calcolare lo zero.
+    m: coefficiente angolare della retta che rimane fisso per tutte le iterazioni
+    tolx: La tolleranza di errore tra due iterati successivi
+    tolf: tolleranza sul valore della funzione
+    nmax: numero massimo di iterazione
+    
+    Restituisce:
+    Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi.
+    """
+    xk=[]
+    fx0=fname(x0)
+    d=fx0/m
+    x1=x0-d
+    fx1=fname(x1)
+    xk.append(x1)
+    it=1
+    
+    while it<nmax and  abs(fx1)>=tolf and abs(d)>=tolx*abs(x1) :
+       x0=x1
+       fx0=fname(x0)
+       d=fx0/m
+       '''
+       #x1= ascissa del punto di intersezione tra  la retta che passa per il punto
+       (xi,f(xi)) e ha pendenza uguale a m  e l'asse x
+       '''
+       x1=x0-d  
+       fx1=fname(x1)
+       it=it+1
+     
+       xk.append(x1)
       
-  
-  return x1,it,xk
+    if it==nmax:
+        print('raggiunto massimo numero di iterazioni \n')
+        
+    
+    return x1,it,xk
 
 def newton(fname,fpname,x0,tolx,tolf,nmax):
-  """
-  Implementa il metodo di Newton per il calcolo degli zeri di un'equazione non lineare.
-
-  Parametri:
-    fname: La funzione di cui si vuole calcolare lo zero.
-    fpname: La derivata prima della funzione di  cui si vuole calcolare lo zero.
-    x0: iterato iniziale
-    tolx: La tolleranza di errore tra due iterati successivi
-    tolf: tolleranza sul valore della funzione
-    nmax: numero massimo di iterazione
-
-  Restituisce:
-    Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi.
-  """ 
-  xk=[]
-  fx0=fname(x0)
-  if abs(fpname(x0)) < 1e-14: #to do
-    print(" derivata prima nulla in x0")
-    return None, None,None
-  
-  d=-fx0/fpname(x0)     #to do
-  x1=x0+d               #to do
-  
-  fx1=fname(x1)
-  xk.append(x1)
-  it=1
-  
-  while abs(fx1) > tolf and abs(d) > tolx and it < nmax:#to do
-    x0=x1               #to do
-    fx0=fname(x1)       #to do
-    if abs(fpname(x0)) < 1e-14:  #to do #Se la derivata prima e' pià piccola della precisione di macchina stop
+    """
+    Implementa il metodo di Newton per il calcolo degli zeri di un'equazione non lineare.
+    
+    Parametri:
+     fname: La funzione di cui si vuole calcolare lo zero.
+     fpname: La derivata prima della funzione di  cui si vuole calcolare lo zero.
+     x0: iterato iniziale
+     tolx: La tolleranza di errore tra due iterati successivi
+     tolf: tolleranza sul valore della funzione
+     nmax: numero massimo di iterazione
+    
+    Restituisce:
+     Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi.
+    """ 
+    xk=[]
+    fx0=fname(x0)
+    if abs(fpname(x0))<=np.spacing(1):
         print(" derivata prima nulla in x0")
         return None, None,None
-    d=-fx0/fpname(x0)   #to do
     
-    x1=x0+d             #to do
+    d=fx0/fpname(x0)
+    x1=x0-d
     fx1=fname(x1)
-    it=it+1
-  
     xk.append(x1)
+    it=1
     
-  if it==nmax:
-    print('raggiunto massimo numero di iterazioni \n')
+    while it<nmax and  abs(fx1)>=tolf and abs(d)>=tolx*abs(x1) :
+       x0=x1
+       fx0=fname(x0)
+       if abs(fpname(x0))<=np.spacing(1): #Se la derivata prima e' pià piccola della precisione di macchina stop
+            print(" derivata prima nulla in x0")
+            return None, None,None
+       d=fx0/fpname(x0)
+       x1=x0-d  
+       fx1=fname(x1)
+       it=it+1
+       xk.append(x1)
       
-  return x1,it,xk
+    if it==nmax:
+        print('raggiunto massimo numero di iterazioni \n')
+        
+    return x1,it,xk
 
 def secanti(fname,xm1,x0,tolx,tolf,nmax):
-  """Implementa il metodo delle secanti per il calcolo degli zeri di un'equazione non lineare.
-  Parametri:
-    fname: La funzione di cui si vuole calcolare lo zero.
-    xm1, x0: primi due iterati
-    tolx: La tolleranza di errore tra due iterati successivi
-    tolf: tolleranza sul valore della funzione
-    nmax: numero massimo di iterazione
-
-  Restituisce:
-    Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi."""
-  xk=[]
-  fxm1=fname(xm1)#to do
-  fx0=fname(x0)#to do
-  d=-fx0*(x0-xm1)/(fx0-fxm1)#to do
-  x1=x0+d#to do
-  xk.append(x1)
-  fx1=fname(x1)
-  it=1
-  
-  while it<nmax and abs(fx1)>=tolf and abs(d)>=tolx*abs(x1):
-    xm1=x0#to do
-    x0=x1#to do
-    fxm1=fname(xm1)#to do
-    fx0=fname(x0)#to do 
-    d=-fx0*(x0-xm1)/(fx0-fxm1)#to do
-    x1=x0+d#to do
-    fx1=fname(x1)
+    """
+     Implementa il metodo delle secanti per il calcolo degli zeri di un'equazione non lineare.
+    
+     Parametri:
+      fname: La funzione di cui si vuole calcolare lo zero.
+      xm1, x0: primi due iterati
+      tolx: La tolleranza di errore tra due iterati successivi
+      tolf: tolleranza sul valore della funzione
+      nmax: numero massimo di iterazione
+    
+     Restituisce:
+      Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi.
+     """
+    xk=[]
+    fxm1=fname(xm1)
+    fx0=fname(x0); 
+    d=fx0*(x0-xm1)/(fx0-fxm1)
+    x1=x0-d
     xk.append(x1)
-    it=it+1
-      
-  
-  if it==nmax:
-    print('Secanti: raggiunto massimo numero di iterazioni \n')
-  
-  return x1,it,xk
+    fx1=fname(x1)
+    it=1
+   
+    while it<nmax and abs(fx1)>=tolf and abs(d)>=tolx*abs(x1):
+        xm1=x0
+        x0=x1
+        fxm1=fname(xm1)
+        fx0=fname(x0) 
+        d=fx0*(x0-xm1)/(fx0-fxm1)
+        x1=x0-d
+        fx1=fname(x1)
+        xk.append(x1)
+        it=it+1
+       
+   
+    if it==nmax:
+       print('Secanti: raggiunto massimo numero di iterazioni \n')
+    
+    return x1,it,xk
 
 def newton_mod(fname,fpname,m,x0,tolx,tolf,nmax):
     """
     Implementa il metodo di Newton modificato da utilizzato per il calcolo degli zeri di un'equazione non lineare
     nel caso di zeri multipli.
-
+    
     Parametri:
-      fname: La funzione di cui si vuole calcolare lo zero.
-      fpname: La derivata prima della funzione di  cui si vuole calcolare lo zero.
-      m: molteplicità della radice
-      x0: iterato iniziale
-      tolx: La tolleranza di errore tra due iterati successivi
-      tolf: tolleranza sul valore della funzione
-      nmax: numero massimo di iterazione
-
+     fname: La funzione di cui si vuole calcolare lo zero.
+     fpname: La derivata prima della funzione di  cui si vuole calcolare lo zero.
+     m: molteplicità della radice
+     x0: iterato iniziale
+     tolx: La tolleranza di errore tra due iterati successivi
+     tolf: tolleranza sul valore della funzione
+     nmax: numero massimo di iterazione
+    
     Restituisce:
-      Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi.
+     Lo zero approssimato della funzione, il numero di iterazioni e la lista degli iterati intermedi.
     """ 
 
     xk=[]
-    fx0=#to do
-    if :#to do
-      print(" derivata prima nulla in x0")
-      return None, None,None
+    fx0=fname(x0)
+    if abs(fpname(x0))<=np.spacing(1):
+        print(" derivata prima nulla in x0")
+        return None, None,None
 
-    d=#to do
-    x1=#to do
+    d=fx0/fpname(x0)
+    x1=x0-m*d
     
-    fx1=#to do
+    fx1=fname(x1)
     xk.append(x1)
     it=1
     
-    while :#to do
-      x0=#to do
-      fx0=#to do
-      if :#to do #Se la derivata prima e' pià piccola della precisione di macchina stop
-        print(" derivata prima nulla in x0")
-        return None, None,None
-      d=#to do
-      
-      x1=#to do 
-      fx1=fname(x1)
-      it=it+1
-    
-      xk.append(x1)
+    while it<nmax and  abs(fx1)>=tolf and abs(d)>=tolx*abs(x1) :
+       x0=x1
+       fx0=fname(x0)
+       if abs(fpname(x0))<=np.spacing(1): #Se la derivata prima e' pià piccola della precisione di macchina stop
+            print(" derivata prima nulla in x0")
+            return None, None,None
+       d=fx0/fpname(x0)
+        
+       x1=x0-m*d  
+       fx1=fname(x1)
+       it=it+1
+     
+       xk.append(x1)
       
     if it==nmax:
         print('raggiunto massimo numero di iterazioni \n')
@@ -273,8 +272,13 @@ def stima_ordine(xk,iterazioni):
       ordine=p
       return ordine
 
-def my_newtonSys(fun, jac, x0, tolx, tolf, nmax):
+def sign(x):
+  """
+  Funzione segno che restituisce 1 se x è positivo, 0 se x è zero e -1 se x è negativo.
+  """
+  return math.copysign(1, x)
 
+def my_newtonSys(fun, jac, x0, tolx, tolf, nmax):
   """
   Funzione per la risoluzione del sistema F(x)=0
   mediante il metodo di Newton.
@@ -303,31 +307,30 @@ def my_newtonSys(fun, jac, x0, tolx, tolf, nmax):
   """
 
   matjac = jac(x0)
-  if npl.det(matjac) == 0:  #to do
+  if np.linalg.det(matjac) == 0:
     print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
     return None, None,None
 
-  s = -npl.solve(matjac,fun(x0))  #to do
+  s = -np.linalg.solve(matjac, fun(x0))
   # Aggiornamento della soluzione
   it = 1
-  x1 = x0+s   #to do
+  x1 = x0 + s
   fx1 = fun(x1)
 
   Xm = [np.linalg.norm(s, 1)/np.linalg.norm(x1,1)]
 
-  while it <= nmax and npl.norm(fx1,1) >= tolf and npl.norm(s,1) > npl.norm(x1,1)*tolx:#to do
-    x0 = x1   #to do
+  while it <= nmax and np.linalg.norm(fx1, 1) >= tolf and np.linalg.norm(s, 1) >= tolx * np.linalg.norm(x1, 1):
+    x0 = x1
     it += 1
     matjac = jac(x0)
-    if npl.det(matjac) == 0:  #to do
-      print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
-      return None, None,None
-
-   
-    s = -npl.solve(matjac,fun(x0))#to do
+    if np.linalg.det(matjac) == 0:
+            print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
+            return None, None,None
+        
+    s = -np.linalg.solve(matjac, fun(x0))
 
     # Aggiornamento della soluzione
-    x1 = x0+s#to do
+    x1 = x0 + s
     fx1 = fun(x1)
     Xm.append(np.linalg.norm(s, 1)/np.linalg.norm(x1,1))
 
@@ -364,31 +367,30 @@ def my_newtonSys_corde(fun, jac, x0, tolx, tolf, nmax):
       Vettore contenente la norma dell'errore relativo tra due iterati successivi.
   """
 
-  matjac = jac(x0)   
-  if #to do:
+  matjac = jac(x0)
+  if np.linalg.det(matjac) == 0:
     print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
     return None, None,None
-  s = #to do
+  s = -np.linalg.solve(matjac, fun(x0))
   # Aggiornamento della soluzione
   it = 1
-  x1 = #to do
+  x1 = x0 + s
   fx1 = fun(x1)
 
   Xm = [np.linalg.norm(s, 1)/np.linalg.norm(x1,1)]
 
-  while #to do:
-    x0 = #to do
+  while it <= nmax and np.linalg.norm(fx1, 1) >= tolf and np.linalg.norm(s, 1) >= tolx * np.linalg.norm(x1, 1):
+    x0 = x1
     it += 1
    
-   
-    if #to do:
-      print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
-      return None, None,None
+    if np.linalg.det(matjac) == 0:
+        print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
+        return None, None,None
     
-    s = #to do
+    s = -np.linalg.solve(matjac, fun(x0))
 
     # Aggiornamento della soluzione
-    x1 =  #to do
+    x1 = x0 + s
     fx1 = fun(x1)
     Xm.append(np.linalg.norm(s, 1)/np.linalg.norm(x1,1))
 
@@ -425,33 +427,34 @@ def my_newtonSys_sham(fun, jac, x0, tolx, tolf, nmax):
   """
 
   matjac = jac(x0)
-  if #to do:
+  if np.linalg.det(matjac) == 0:
     print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
     return None,None,None
 
-  s = #to do
+  s = -np.linalg.solve(matjac, fun(x0))
   # Aggiornamento della soluzione
   it = 1
-  x1 = x0 + s#to do
+  x1 = x0 + s
   fx1 = fun(x1)
 
   Xm = [np.linalg.norm(s, 1)/np.linalg.norm(x1,1)]
   update=10  #Numero di iterazioni durante le quali non si aggiorna la valutazione dello Jacobiano nell'iterato attuale
-  while #to do:
-    x0 =  #to do
+  while it <= nmax and np.linalg.norm(fx1, 1) >= tolf and np.linalg.norm(s, 1) >= tolx * np.linalg.norm(x1, 1):
+    x0 = x1
     it += 1
     if it%update==0:   #Valuto la matrice di iterazione nel nuovo iterato ogni "update" iterazioni
-        #to do
-      if :#to do == 0
-          print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
-          return None,None,None
-      else:
-        s = #to do
-    else: 
-      s = -#to do
+        matjac=jac(x0)
+   
+        if np.linalg.det(matjac) == 0:
+           print("La matrice dello Jacobiano calcolata nell'iterato precedente non è a rango massimo")
+           return None,None,None
+        else:
+           s = -np.linalg.solve(matjac, fun(x0))
+    else:
+           s = -np.linalg.solve(matjac, fun(x0))
 
     # Aggiornamento della soluzione
-    x1 = #to do
+    x1 = x0 + s
     fx1 = fun(x1)
     Xm.append(np.linalg.norm(s, 1)/np.linalg.norm(x1,1))
 
@@ -490,35 +493,34 @@ def my_newton_minimo(gradiente, Hess, x0, tolx, tolf, nmax):
     Vettore contenente la norma del passo ad ogni iterazione.
   """
 
-  matHess = Hess(x0)#to do
-  if npl.det(matHess) == 0:#to do
+  matHess = Hess(x0)
+  if np.linalg.det(matHess) == 0:
     print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
     return None, None, None
   grad_fx0= gradiente(x0)    
-  s = -npl.solve(matHess, gradiente(x0))#to do
+  s = -np.linalg.solve(matHess, gradiente(x0))
   # Aggiornamento della soluzione
   it = 1
-  x1 = x0+s   #to do
+  x1 = x0 + s
   grad_fx1 = gradiente(x1)
   Xm = [np.linalg.norm(s, 1)]
   
-  while it <= nmax and npl.norm(grad_fx1,1) >= tolf and npl.norm(s,1) >= tolx*npl.norm(x1,1):#to do
+  while it <= nmax and np.linalg.norm(grad_fx1 , 1) >= tolf and np.linalg.norm(s, 1) >= tolx * np.linalg.norm(x1, 1):
      
-    x0 = x1#to do
+    x0 = x1
     it += 1
-    matHess = Hess(x0)#to do
+    matHess = Hess(x0)
     grad_fx0=grad_fx1
      
-    if npl.det(matHess) == 0:#to do
+    if np.linalg.det(matHess) == 0:
        
       print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
       return None, None, None
       
- 
-    s = -npl.solve(matHess, gradiente(x0))#to do
+    s = -np.linalg.solve(matHess, grad_fx0)
      
     # Aggiornamento della soluzione
-    x1 = x0+s#to do
+    x1 = x0 + s
 
     #Calcolo del gradiente nel nuovo iterato
     grad_fx1  = gradiente(x1)
@@ -564,34 +566,34 @@ def my_newton_minimo_MOD(gradiente, Hess, x0, tolx, tolf, nmax):
 
   gradiente_x0=np.array([gradiente[0](x0[0], x0[1]),gradiente[1](x0[0], x0[1])])
    
-  if :  #to do
+  if np.linalg.det(matHess) == 0:
     print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
     return None, None, None
       
-  s = -npl.solve(matHess, gradiente_x0)#to do
-  
+  s = -np.linalg.solve(matHess, gradiente_x0)
+
   # Aggiornamento della soluzione
   it = 1
-  x1 = x0+s#to do
+  x1 = x0 + s
   grad_fx1=np.array([gradiente[0](x1[0],x1[1]),gradiente[1](x1[0],x1[1])])
   Xm = [np.linalg.norm(s, 1)]
   
-  while #to do:
-     
+  while it <= nmax and np.linalg.norm(grad_fx1, 1) >= tolf and np.linalg.norm(s, 1) >= tolx * np.linalg.norm(x1, 1):
     x0 = x1
     it += 1
-    matHess = Hess(x0)#to do
+    matHess = np.array([[Hess[0, 0](x0[0], x0[1]), Hess[0, 1](x0[0], x0[1])],
+                      [Hess[1, 0](x0[0], x0[1]), Hess[1, 1](x0[0], x0[1])]])
     grad_fx0=grad_fx1
       
     if np.linalg.det(matHess) == 0:
       print("La matrice Hessiana calcolata nell'iterato precedente non è a rango massimo")
       return None, None, None
-  
-    s = #to do
+
+    s = -np.linalg.solve(matHess, grad_fx0)
      
     # Aggiornamento della soluzione
-    x1 =#to do
-    #Aggiorno il gradiente per la prossima iterazione 
+    x1 = x0 + s
+    # Aggiorno il gradiente per la prossima iterazione 
     grad_fx1=np.array([gradiente[0](x1[0],x1[1]),gradiente[1](x1[0],x1[1])])
     print(np.linalg.norm(s, 1))
     Xm.append(np.linalg.norm(s, 1))
@@ -749,7 +751,7 @@ def eqnorm(A,b):
   G=A.T@A
   f=A.T@b 
     
-  L=spLin.cholesky(G,lower=True)
+  L=spl.cholesky(G,lower=True)
   U=L.T
         
   z=SolveTriangular.Lsolve(L,f)
@@ -760,7 +762,7 @@ def eqnorm(A,b):
 def qrLS(A,b):
   #Risolve un sistema sovradeterminato con il metodo QR-LS
   n=A.shape[1]  #numero di colonne di A
-  Q,R=spLin.qr(A)
+  Q,R=spl.qr(A)
   h=Q.T@b       #to do
   x,flag=SolveTriangular.Usolve(R[0:n,0:n],h[0:n])#to do
   residuo=np.linalg.norm(h[n:])**2
@@ -769,7 +771,7 @@ def qrLS(A,b):
 def SVDLS(A,b):
     #Risolve un sistema sovradeterminato con il metodo SVD-LS
     m,n=A.shape  #numero di righe e  numero di colonne di A
-    U,s,VT=spLin.svd(A)  #Attenzione : Restituisce U, il numpy-array 1d che contiene la diagonale della matrice Sigma e VT=VTrasposta)
+    U,s,VT=spl.svd(A)  #Attenzione : Restituisce U, il numpy-array 1d che contiene la diagonale della matrice Sigma e VT=VTrasposta)
     #Quindi 
     V=VT.T
     thresh=np.spacing(1)*m*s[0] ##Calcolo del rango della matrice, numero dei valori singolari maggiori di una soglia
