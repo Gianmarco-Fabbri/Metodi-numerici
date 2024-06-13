@@ -637,9 +637,9 @@ def gauss_seidel(A,b,x0,toll,it_max):
     print("raggio spettrale Gauss-Seidel ",raggiospettrale)
     it=0
     er_vet=[]
-    while it<=it_max and errore>=toll:  #to do
-      temp=b-F@x0               #to do
-      x,flag=SolveTriangular.Lsolve(M,temp)        #to do 
+    while it<=it_max and errore>=toll:              #to do
+      temp=b-F@x0                                   #to do
+      x,flag=SolveTriangular.Lsolve(M,temp)         #to do 
       errore=np.linalg.norm(x-x0)/np.linalg.norm(x)
       er_vet.append(errore)
       x0=x.copy()
@@ -755,8 +755,7 @@ def eqnorm(A,b):
   U=L.T
         
   z=SolveTriangular.Lsolve(L,f)
-  x=SolveTriangular.Usolve(U,x)
-    
+  x=SolveTriangular.Usolve(U,z)
   return x
     
 def qrLS(A,b):
@@ -796,7 +795,7 @@ def plagr(xnodi,j):
     if j==0:
       xzeri=xnodi[1:n]
     else:
-      xzeri=np.append(xnodi[0:j],xnodi[j+1,n])  #to do
+      xzeri=np.append(xnodi[0:j],xnodi[j+1:n])  #to do
     
     num=np.poly(xzeri)  #to do
     den=np.polyval(num, xnodi[j])  #to do
